@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
+import { ScrollView } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput } from 'react-native';
@@ -7,12 +8,15 @@ import { TextInput } from 'react-native';
 export default function App() {
   const [input, setInput] = useState('')
   const [result, setResult] = useState('')
+  const [history, setHistory] = useState([])
   
   
   const onButtonPress = (value) => {
     if (value === '=') { 
       try {
-        setResult(eval(input));
+        const evalResult = eval(input);
+        setResult(evalResult);
+        setHistory(prev => ([{ expression: input, result: evalResult }, ...prev]));
       } catch (error) {
         setResult('Error');
       }
@@ -42,6 +46,14 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
+      {/* History ScrollView */}
+      <ScrollView style={{ maxHeight: 100, marginBottom: 10 }} contentContainerStyle={{ alignItems: 'flex-end' }}>
+        {history.map((item, idx) => (
+          <Text key={idx} style={{ color: '#555', fontSize: 18 }}>
+            {item.expression} = {item.result}
+          </Text>
+        ))}
+      </ScrollView>
       <View style={styles.resultContainer}>
         <Text style={styles.resultText}>{result}</Text>
       </View>
