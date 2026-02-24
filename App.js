@@ -19,6 +19,21 @@ export default function App() {
     } else if (value === 'C') {
       setInput('');
       setResult('');
+    } else if (value === '.') {
+      // Prevent multiple decimals in the current number
+      const parts = input.split(/[-+*/]/);
+      const last = parts[parts.length - 1];
+      if (!last.includes('.')) {
+        setInput(prev => prev + value);
+      }
+    } else if (value === '%') {
+      // Calculate percentage of the last number
+      const match = input.match(/(\d+\.?\d*)$/);
+      if (match) {
+        const num = parseFloat(match[1]);
+        const percent = num / 100;
+        setInput(input.replace(/(\d+\.?\d*)$/, percent.toString()));
+      }
     } else {
       setInput(prev => prev + value);
     }
@@ -37,21 +52,18 @@ export default function App() {
           onChangeText={setInput}
           keyboardType='numeric'
         />
-  
-
       </View>
       <View style={styles.buttonContainer}>
-          {['7', '8', '9', '/','4', '5', '6', '*','1', '2', '3', '-','0', 'C', '=', '+'].map((item,index) => (
-            <TouchableOpacity 
+        {['7', '8', '9', '/', '4', '5', '6', '*', '1', '2', '3', '-', '0', '.', '%', 'C', '=', '+'].map((item, index) => (
+          <TouchableOpacity 
             key={index} 
             style={styles.button}
-            onPress={() => onButtonPress(item)} >
-
-              <Text style={styles.buttonText}>{item}</Text>
-            </TouchableOpacity>
-            )
-           )}
-        </View>
+            onPress={() => onButtonPress(item)}
+          >
+            <Text style={styles.buttonText}>{item}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </SafeAreaView>
   );
 }
